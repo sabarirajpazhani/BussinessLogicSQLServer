@@ -127,3 +127,14 @@ where o2.OrderDate between dateadd(day, -6, o1.OrderDate) and o1.OrderDate
 group by o1.CustomerID , o1.OrderDate
 having count(*) >=3
 order by o1.CustomerID,o1.OrderDate
+
+
+-- 3. Show CustomerID, OrderDate, and 7-day order count, but only include customers who made their first order before June 3, 2025.
+select o1.CustomerID, o1.OrderDate, count(*) from Orders1 o1
+left join Orders1 o2 on o1.CustomerID = o2.CustomerID
+where o2.OrderDate between dateadd(day, -6, o1.OrderDate) and o1.OrderDate
+and o1.CustomerID in (select CustomerID from Orders1 where OrderDate < '2025-06-03' group by CustomerID )
+group by o1.CustomerID , o1.OrderDate
+order by o1.CustomerID, o1.OrderDate
+
+select * from orders1;
