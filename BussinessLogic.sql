@@ -134,8 +134,6 @@ group by CustomerID
 having Count(distinct month(OrderDate)) = 6
 
 
-
-
 --Q4
 create table Employee (
 	EmployeeID int,
@@ -162,7 +160,6 @@ with Relation AS (
 )
 
 select * from Relation;
-
 
 
 
@@ -193,8 +190,25 @@ Create table Sales (
 	SalesDate date, 
 	Amount decimal(10,2)
 );
+insert into Sales values
+(1, '2025-06-01', 200.00),
+(1, '2025-06-02', 150.00),
+(1, '2025-06-04', 250.00),
+(1, '2025-06-07', 300.00),
+(1, '2025-06-08', 100.00),
+(2, '2025-06-01', 500.00),
+(2, '2025-06-03', 400.00),
+(2, '2025-06-05', 300.00),
+(2, '2025-06-07', 350.00),
+(2, '2025-06-08', 450.00);
 
+select * from Sales;
 
+select s1.ProductID, s1.SalesDate, avg(s2.Amount) as Average from Sales s1
+left join Sales s2 on s1.ProductID = s2.ProductID
+where s2.SalesDate between dateadd(day, -6, s1.SalesDate) and s1.SalesDate
+group by s1.ProductID, s1.SalesDate
+order by s1.ProductID,s1.SalesDate;
 
 
 
@@ -335,7 +349,6 @@ with CTE_Customer as(
 select CustomerID,  max(OrderDate) as OrderDate, TotalAmount from Orders3 
 where CustomerID in (select CustomerID from CTE_Customer) 
 group by CustomerID, TotalAmount;
-
 
 
 
