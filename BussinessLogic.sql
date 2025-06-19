@@ -138,3 +138,18 @@ group by o1.CustomerID , o1.OrderDate
 order by o1.CustomerID, o1.OrderDate
 
 select * from orders1;
+
+--4. Identify the CustomerIDs who placed more orders in the last 7 days than the 7 days before that (rolling window comparison).
+with temp1 as(
+
+	select o1.CustomerID, 
+		   o1.OrderDate,
+		   sum(case when o2.OrderDate between dateadd(day, -6, o1.Orderdate) and o1.OrderDate then 1 else 0 end) as current7,
+		   sum(case when o2.OrderDate between dateadd(day, -13, o1.Orderdate)and dateadd(day, -7, o1.Orderdate) then 1 else 0 end) as Previous7
+	from Orders1 o1
+	join Orders1 o2 on o1.CustomerID  = o2.CustomerID
+	group by o1.CustomerID, o1.OrderDate
+
+)
+select CustomerID from temp1
+where Previous7 < current7 and Previous7 <> 0;
