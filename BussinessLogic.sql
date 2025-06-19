@@ -163,3 +163,52 @@ group by o1.OrderDate
 order by o1.OrderDate;
 
 select * from orders1;
+
+
+--Get top 2 paid employees per department whose salary is above department average
+--table(EmpID, EmpName, DeptID, Salary)
+create table Employee (
+	EmpID int primary key,
+	EmpName varchar(80),
+	DeptID int, 
+	Salary decimal(10,2)
+);
+
+insert into Employee values
+(101, 'Alice',     1, 72000.00),
+(102, 'Bob',       1, 85000.00),
+(103, 'Charlie',   1, 60000.00),
+(104, 'Diana',     1, 95000.00),
+(105, 'Ethan',     1, 50000.00),
+ 
+-- Department 2
+(106, 'Fiona',     2, 68000.00),
+(107, 'George',    2, 75000.00),
+(108, 'Hannah',    2, 82000.00),
+(109, 'Ian',       2, 57000.00),
+(110, 'Julia',     2, 61000.00),
+ 
+-- Department 3
+(111, 'Kevin',     3, 92000.00),
+(112, 'Laura',     3, 98000.00),
+(113, 'Mike',      3, 72000.00),
+(114, 'Nina',      3, 55000.00),
+(115, 'Oscar',     3, 64000.00);
+
+select * from Employee;
+
+with DepartmentAvg as (
+	Select DeptID, avg(Salary)as DeptAvg from Employee
+	group by DeptID
+)
+select top 2 e.EmpID, e.EmpName, d.DeptID, max(e.salary) from Employee e
+inner join DepartmentAvg d on e.DeptID = d.DeptID
+where e.Salary < d.DeptAvg
+order by salary desc;
+
+
+
+/*select top 2 e.EmpName, d.DeptID, e.Salary  from Employee e
+					inner join DepartmentAvg d on d.DeptID = e.DeptID
+					group by e.EmpName, d.DeptID, e.Salary
+					Order by e.salary desc*/
