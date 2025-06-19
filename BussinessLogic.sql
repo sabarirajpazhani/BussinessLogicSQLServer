@@ -153,3 +153,13 @@ with temp1 as(
 )
 select CustomerID from temp1
 where Previous7 < current7 and Previous7 <> 0;
+
+
+--5.  Create a daily summary: for each OrderDate, how many CustomerIDs had at least one order in the last 7 days (unique customer count).
+select o1.OrderDate, count(o1.CustomerID) as CustomerCount from Orders1 o1
+left join orders1 o2 on o1.CustomerID = o2.CustomerID
+where o2.OrderDate between dateadd(day, -6, o1.Orderdate) and o1.OrderDate
+group by o1.OrderDate
+order by o1.OrderDate;
+
+select * from orders1;
