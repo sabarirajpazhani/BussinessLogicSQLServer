@@ -197,18 +197,81 @@ insert into Employee values
 
 select * from Employee;
 
+
+
+
+
 with DepartmentAvg as (
 	Select DeptID, avg(Salary)as DeptAvg from Employee
 	group by DeptID
+),
+Salries as (
+	select EmpID, EmpName, DeptID, salary, row_number() over (partition by DeptID order by Salary Desc) as rank from Employee
+
 )
-select top 2 e.EmpID, e.EmpName, d.DeptID, max(e.salary) from Employee e
+select e.EmpID, e.EmpName, e.DeptID, s.Salary from Employee e
 inner join DepartmentAvg d on e.DeptID = d.DeptID
-where e.Salary < d.DeptAvg
-order by salary desc;
+inner join Salries s on e.EmpID = s.EmpID
+where d.DeptAvg < e.Salary and s.rank <=2
+ 
 
 
+
+
+ Select DeptID, avg(Salary)as DeptAvg from Employee
+	group by DeptID
 
 /*select top 2 e.EmpName, d.DeptID, e.Salary  from Employee e
 					inner join DepartmentAvg d on d.DeptID = e.DeptID
 					group by e.EmpName, d.DeptID, e.Salary
 					Order by e.salary desc*/
+
+
+
+
+
+
+create table Orderss
+(
+	OrderID int primary key,
+	CustomerID int,
+	OrderDate date,
+	PurchaseAmt decimal(10,2)
+)
+ 
+insert into Orderss values(101,1,'2025-06-10',100),(102,1,'2025-06-10',150),(103,2,'2025-06-10',500)
+,(104,1,'2025-06-11',300),(105,2,'2025-06-11',100),(106,1,'2025-06-12',700)
+
+select * from Orderss;
+
+
+
+with Orders as(
+	select CustomerID, OrderDate from Orderss
+	group by CustomerID, OrderDate
+)
+select distinct o1.CustomerID from Orders o1
+join Orders o2 on o1.CustomerID = o2.CustomerID
+and datediff(day, o1.OrderDate, o2.OrderDate) = 1
+
+
+
+--"Show running total of sales for each customer, reset when month changes."
+ 
+CREATE TABLE Sales (
+    SaleID INT PRIMARY KEY,
+    CustomerID INT,
+    SaleAmount DECIMAL(10, 2),
+    SaleDate DATE
+);
+INSERT INTO Sales (SaleID, CustomerID, SaleAmount, SaleDate) VALUES
+(1, 101, 1000.00, '2025-01-05'),
+(2, 101, 1500.00, '2025-01-10'),
+(3, 101, 2000.00, '2025-02-01'),
+(4, 101, 1200.00, '2025-02-05'),
+(5, 101, 1800.00, '2025-03-01'),
+(6, 102, 500.00,  '2025-01-03'),
+(7, 102, 700.00,  '2025-01-25'),
+(8, 102, 300.00,  '2025-02-10'),
+(9, 102, 600.00,  '2025-02-20'),
+(10, 102, 400.00, '2025-03-05');
