@@ -215,21 +215,7 @@ inner join Salries s on e.EmpID = s.EmpID
 where d.DeptAvg < e.Salary and s.rank <=2
  
 
-
-
-
- Select DeptID, avg(Salary)as DeptAvg from Employee
-	group by DeptID
-
-/*select top 2 e.EmpName, d.DeptID, e.Salary  from Employee e
-					inner join DepartmentAvg d on d.DeptID = e.DeptID
-					group by e.EmpName, d.DeptID, e.Salary
-					Order by e.salary desc*/
-
-
-
-
-
+-------------------------------------------------------------------------------------------
 
 create table Orderss
 (
