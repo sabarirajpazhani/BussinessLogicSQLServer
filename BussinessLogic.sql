@@ -197,10 +197,6 @@ insert into Employee values
 
 select * from Employee;
 
-
-
-
-
 with DepartmentAvg as (
 	Select DeptID, avg(Salary)as DeptAvg from Employee
 	group by DeptID
@@ -214,8 +210,8 @@ inner join DepartmentAvg d on e.DeptID = d.DeptID
 inner join Salries s on e.EmpID = s.EmpID
 where d.DeptAvg < e.Salary and s.rank <=2
  
+----------------------------------------------------------------------
 
--------------------------------------------------------------------------------------------
 
 create table Orderss
 (
@@ -261,3 +257,4 @@ INSERT INTO Sales (SaleID, CustomerID, SaleAmount, SaleDate) VALUES
 (8, 102, 300.00,  '2025-02-10'),
 (9, 102, 600.00,  '2025-02-20'),
 (10, 102, 400.00, '2025-03-05');
+
