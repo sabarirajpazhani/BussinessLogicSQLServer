@@ -258,3 +258,44 @@ INSERT INTO Sales (SaleID, CustomerID, SaleAmount, SaleDate) VALUES
 (9, 102, 600.00,  '2025-02-20'),
 (10, 102, 400.00, '2025-03-05');
 
+
+/*Initially, all products have price 10.
+
+Write a solution to find the prices of all products on the date 2019-08-16.
+
+Return the result table in any order.
+
+The result format is in the following example.
+Example 1:
+
+Input: 
+Products table:
++------------+-----------+-------------+
+| product_id | new_price | change_date |
++------------+-----------+-------------+
+| 1          | 20        | 2019-08-14  |
+| 2          | 50        | 2019-08-14  |
+| 1          | 30        | 2019-08-15  |
+| 1          | 35        | 2019-08-16  |
+| 2          | 65        | 2019-08-17  |
+| 3          | 20        | 2019-08-18  |
++------------+-----------+-------------+
+Output: 
++------------+-------+
+| product_id | price |
++------------+-------+
+| 2          | 50    |
+| 1          | 35    |
+| 3          | 10    |
++------------+-------+*/
+
+with lessthen16 as (
+    select product_id , new_price, change_date, dense_rank() over(partition by product_id order by change_date desc) as rnk  from Products
+	where change_date <='2019-08-16'
+	group by product_id,new_price, change_date
+)
+select product_id , new_price as price from lessthen16
+where rnk = 1 
+union
+select product_id, 10 from products
+where change_date > '2019-08-16' and product_id not in (select Product_id from lessthen16);
