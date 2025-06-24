@@ -327,7 +327,7 @@ INSERT INTO Activity (user_id, session_id, activity_date, activity_type) VALUES
 
 select * from Activity;
 
-select activity_date as day, count(distinct user_id) as active_users from Activity
+ select activity_date as day, count(distinct user_id) as active_users from Activity
 where activity_date between dateadd(day, -29,'2019-07-27') and '2019-07-27'
 group by activity_date;
 
@@ -339,3 +339,113 @@ group by activity_date;
 select distinct a.activity_date as day, count(a.user_id) as active_users from Activity a
 inner join activeuser a1 on a.user_id = a1.user_id
 where rnk = 2*/
+
+select dateadd(day, -29,'2019-07-27')
+
+
+--List total sales per customer in the last 6 months.
+CREATE TABLE Sales2 (
+    SaleID INT PRIMARY KEY,
+    CustomerID INT,
+    SaleAmount DECIMAL(10,2),
+    SaleDate DATE
+);
+INSERT INTO Sales2 (SaleID, CustomerID, SaleAmount, SaleDate) VALUES
+(1, 101, 250.00, '2025-06-10'),
+(2, 102, 120.00, '2025-05-15'),
+(3, 103, 75.00,  '2025-04-01'),
+(4, 101, 180.00, '2025-03-20'),
+(5, 102, 220.00, '2025-01-05'),
+(6, 104, 310.00, '2024-12-10'), -- older than 6 months
+(7, 105, 90.00,  '2025-06-01'),
+(8, 101, 130.00, '2025-06-21'),
+(9, 103, 200.00, '2025-02-15'),
+(10, 105, 150.00,'2024-11-30'); -- older than 6 months
+
+select * from Sales2;
+
+select customerID, sum(SaleAmount) as TotalAmount from Sales2 
+where datediff(month, saleDate, cast(getdate() as date)) <= 6
+group by customerID
+order by customerID
+
+----------- (or) -----------------
+
+CREATE TABLE Products1 (
+    ProductID INT PRIMARY KEY,
+    ProductName VARCHAR(100),
+    CategoryID INT,
+    ProductPrice DECIMAL(10,2),
+    StockQuantity INT
+);
+CREATE TABLE Categories1 (
+    CategoryID INT PRIMARY KEY,
+    CategoryName VARCHAR(100)
+);
+CREATE TABLE Customers1 (
+    CustomerID INT PRIMARY KEY,
+    CustomerName VARCHAR(100),
+    City VARCHAR(100),
+    Phone VARCHAR(15),
+    Email VARCHAR(100)
+);
+CREATE TABLE Order1 (
+    OrderID INT PRIMARY KEY,
+    CustomerID INT,
+    OrderDate DATE,
+    Status VARCHAR(20)
+);
+CREATE TABLE OrderDetails1 (
+    OrderDetailID INT PRIMARY KEY,
+    OrderID INT,
+    ProductID INT,
+    Quantity INT,
+    UnitPrice DECIMAL(10,2)
+);
+
+INSERT INTO Categories1 VALUES
+(1, 'Electronics'),
+(2, 'Clothing'),
+(3, 'Books');
+ 
+INSERT INTO Products1 VALUES
+(201, 'Laptop', 1, 55000, 10),
+(202, 'Smartphone', 1, 20000, 25),
+(203, 'Jeans', 2, 1500, 100),
+(204, 'Shirt', 2, 800, 150),
+(205, 'SQL Server Book', 3, 1200, 50);
+
+INSERT INTO Customers1 VALUES
+(301, 'Ravi', 'Chennai', '9876543210', 'ravi@mail.com'),
+(302, 'Sneha', 'Bangalore', '9876501234', 'sneha@mail.com'),
+(303, 'Arjun', 'Mumbai', '9876512345', 'arjun@mail.com'),
+(304, 'Meera', 'Delhi', NULL, 'meera@mail.com'),
+(305, 'John', 'Chennai', '9876567890', NULL);
+INSERT INTO Order1 VALUES
+(401, 301, '2024-06-01', 'Shipped'),
+(402, 302, '2024-06-02', 'Pending'),
+(403, 303, '2024-06-05', 'Shipped'),
+(404, 301, '2024-06-07', 'Shipped'),
+(405, 305, '2024-06-10', 'Cancelled');
+ 
+INSERT INTO OrderDetails1 VALUES
+(501, 401, 201, 1, 55000),
+(502, 401, 205, 2, 1200),
+(503, 402, 203, 3, 1500),
+(504, 403, 202, 1, 20000),
+(505, 404, 204, 5, 800),
+(506, 405, 205, 1, 1200);
+
+select * from Products1
+select * from Categories1
+select * from Customers1
+select * from Order1
+select * from OrderDetails1
+
+select o.CustomerID, c.CustomerName, sum(od.Quantity* od.UnitPrice) as TotalAmount from Order1 o
+inner join Customers1 c on o.CustomerID = c.CustomerID
+inner join OrderDetails1 od on o.OrderID = od.OrderID
+where o.OrderDate between dateadd(month, -6, o.OrderDate) and cast(getdate() as date)
+group by o.customerID,  c.CustomerName;
+
+
