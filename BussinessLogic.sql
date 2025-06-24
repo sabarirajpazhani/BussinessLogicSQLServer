@@ -266,6 +266,9 @@ Write a solution to find the prices of all products on the date 2019-08-16.
 Return the result table in any order.
 
 The result format is in the following example.
+
+ 
+
 Example 1:
 
 Input: 
@@ -299,3 +302,40 @@ where rnk = 1
 union
 select product_id, 10 from products
 where change_date > '2019-08-16' and product_id not in (select Product_id from lessthen16);
+
+
+--Write a solution to find the daily active user count for a period of 30 days ending 2019-07-27 inclusively. A user was active on someday if they made at least one activity on that day.
+
+CREATE TABLE Activity (
+    user_id INT,
+    session_id INT,
+    activity_date DATE,
+    activity_type VARCHAR(50)
+);
+INSERT INTO Activity (user_id, session_id, activity_date, activity_type) VALUES
+(1, 1, '2019-07-20', 'open_session'),
+(1, 1, '2019-07-20', 'scroll_down'),
+(1, 1, '2019-07-20', 'end_session'),
+(2, 4, '2019-07-20', 'open_session'),
+(2, 4, '2019-07-21', 'send_message'),
+(2, 4, '2019-07-21', 'end_session'),
+(3, 2, '2019-07-21', 'open_session'),
+(3, 2, '2019-07-21', 'send_message'),
+(3, 2, '2019-07-21', 'end_session'),
+(4, 3, '2019-06-25', 'open_session'),
+(4, 3, '2019-06-25', 'end_session');
+
+select * from Activity;
+
+select activity_date as day, count(distinct user_id) as active_users from Activity
+where datediff(day, activity_date, '2019-07-27') <=30
+group by activity_date;
+
+/*with activeuser as(
+	select user_id, activity_date, dense_rank() over(order by user_id) as rnk from Activity
+	where datediff(day, activity_date, '2019-07-27') <=30
+	group by user_id, activity_date
+)
+select distinct a.activity_date as day, count(a.user_id) as active_users from Activity a
+inner join activeuser a1 on a.user_id = a1.user_id
+where rnk = 2*/
