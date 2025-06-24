@@ -328,7 +328,7 @@ INSERT INTO Activity (user_id, session_id, activity_date, activity_type) VALUES
 select * from Activity;
 
 select activity_date as day, count(distinct user_id) as active_users from Activity
-where datediff(day, activity_date, '2019-07-27') <=30
+where activity_date between dateadd(day, -29,'2019-07-27') and '2019-07-27'
 group by activity_date;
 
 /*with activeuser as(
