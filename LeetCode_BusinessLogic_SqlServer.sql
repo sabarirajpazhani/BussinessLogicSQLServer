@@ -316,15 +316,13 @@ inner join temp p
 on a.player_id = p.player_id and datediff(day,p.date,a.event_date)=1
 
 
-/*Q7. Initially, all products have price 10.
+/*Q8. Initially, all products have price 10.
 
 Write a solution to find the prices of all products on the date 2019-08-16.
 
 Return the result table in any order.
 
 The result format is in the following example.
-
- 
 
 Example 1:
 
@@ -358,3 +356,46 @@ where rnk = 1
 union
 select product_id, 10 from products
 where change_date > '2019-08-16' and product_id not in (select Product_id from lessthen16);
+
+
+/*Q9Write a solution to calculate the number of unique subjects each teacher teaches in the university.
+
+Return the result table in any order.
+
+The result format is shown in the following example.
+
+ 
+
+Example 1:
+
+Input: 
+Teacher table:
++------------+------------+---------+
+| teacher_id | subject_id | dept_id |
++------------+------------+---------+
+| 1          | 2          | 3       |
+| 1          | 2          | 4       |
+| 1          | 3          | 3       |
+| 2          | 1          | 1       |
+| 2          | 2          | 1       |
+| 2          | 3          | 1       |
+| 2          | 4          | 1       |
++------------+------------+---------+
+Output:  
++------------+-----+
+| teacher_id | cnt |
++------------+-----+
+| 1          | 2   |
+| 2          | 4   |
++------------+-----+
+Explanation: 
+Teacher 1:
+  - They teach subject 2 in departments 3 and 4.
+  - They teach subject 3 in department 3.
+Teacher 2:
+  - They teach subject 1 in department 1.
+  - They teach subject 2 in department 1.
+  - They teach subject 3 in department 1.
+  - They teach subject 4 in department 1.*/
+select teacher_id, count(distinct subject_id) as cnt from Teacher
+group by teacher_id
